@@ -23,7 +23,7 @@ use mount::Mount;
 use staticfile::Static;
 use std::path::Path;
 
-const AUTH_STR: &str = "test";
+const AUTH_STR: &str = "x-auth=dsajhdkjasriew232ad";
 
 fn main() {
 
@@ -289,5 +289,5 @@ fn main() {
     println!("Listen on localhost:3000");
     let iron_instance = Iron::new(chain);
     println!("worker threads:{}", iron_instance.threads);
-    iron_instance.http("localhost:3000").unwrap();
+    iron_instance.http("0.0.0.0:3000").unwrap();
 }

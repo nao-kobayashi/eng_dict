@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="ja">
       <head>
-            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <meta name="viewport" content="width=device-width, initial-scale=1" />
             <link href="css/normalize.css" type="text/css" rel="stylesheet" />
             <link href="css/skeleton.css" type="text/css" rel="stylesheet" />            
             <script type="text/javascript">
@@ -15,16 +15,20 @@
                               var cellWordEn = row.insertCell(-1);
                               var cellMeanJa = row.insertCell(-1);
 
-                              //見出し
-                              cellWordEn.appendChild(document.createTextNode(words.tuc[i].phrase.text));
+                              try {
+                                    //見出し
+                                    cellWordEn.appendChild(document.createTextNode(words.tuc[i].phrase.text));
 
-                              //意味
-                              if (words.tuc[i].meanings) {
-                                    for (var h = 0; h < words.tuc[i].meanings.length; h++) {
-                                          var div = document.createElement('div');
-                                          div.appendChild(document.createTextNode(words.tuc[i].meanings[h].text));
-                                          cellMeanJa.appendChild(div);
+                                    //意味
+                                    if (words.tuc[i].meanings) {
+                                          for (var h = 0; h < words.tuc[i].meanings.length; h++) {
+                                                var div = document.createElement('div');
+                                                div.appendChild(document.createTextNode(words.tuc[i].meanings[h].text));
+                                                cellMeanJa.appendChild(div);
+                                          }
                                     }
+                              } catch (e) {
+                                    break;
                               }
                         }
                   };

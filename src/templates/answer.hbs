@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="ja">
+      <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link href="css/normalize.css" type="text/css" rel="stylesheet" />
+            <link href="css/skeleton.css" type="text/css" rel="stylesheet" />   
+            <script type="text/javascript">
+                  var words = {{message}};
+
+                  window.onload = function() { 
+                        for (var i = 0; i < words.length; i++) {
+                              document.getElementById('msg').innerHTML += "<div>" + words[i] + "</div>";
+                        }
+                  };
+            </script>
+      </head>
+      <body>
+            <form action={{translate_path}} method="POST">
+                  <h2>vocabulary notebook</h2>
+                  <input type="text" name="word"/>
+                  <input class="button-primary" type="submit" value="exec"/>
+                  <br />
+                  <a href="{{list_path}}">一覧へ戻る</a>
+                  <hr />
+                  <div id="msg"></div>
+            </form>
+      </body>
+</html>

@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="ja">
+      <head>
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <link href="css/normalize.css" type="text/css" rel="stylesheet" />
+            <link href="css/skeleton.css" type="text/css" rel="stylesheet" />   
+            <script type="text/javascript">
+                  var list = {{list}};
+                  var detail_url = {{detail_path}};
+
+                  window.onload = function() { 
+                        var table = document.getElementById('wordslist');
+
+                        for (var i = 0; i < list.length; i++) {
+                              var row = table.insertRow(-1);
+                              var cellWordEn = row.insertCell(-1);
+                              var cellMeanJa = row.insertCell(-1);
+
+                              //見出し
+                              var link = document.createElement("a");
+                              link.href = detail_url + encodeURI(list[i].phrase);
+                              link.appendChild(document.createTextNode(list[i].phrase));
+                              cellWordEn.appendChild(link);
+
+                              //意味
+                              var ja_str = '';
+                              for (var h = 0; h < list[i].words.length; h++) {
+                                    ja_str += list[i].words[h] + "/";
+                              }
+                              cellMeanJa.appendChild(document.createTextNode(ja_str));
+                        }
+                  };
+            </script>
+      </head>
+      <body>
+            <form action={{translate_path}} method="POST">
+                  <h2>vocabulary notebook</h2>
+                  <input type="text" name="word"/>
+                  <input class="button-primary" type="submit" value="exec"/>
+                  <hr />
+                  <table id="wordslist" class="list">
+                        <tr>
+                              <th>
+                                    検索語句
+                              </th>
+                              <th>
+                                    意味
+                              </th>
+                        </tr>
+                  </table>
+            </form>
+      </body>
+</html>

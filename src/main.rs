@@ -22,8 +22,7 @@ use eng_dict::mongo_db::{ Mongo, convert_jsonlist_to_string };
 use mount::Mount;
 use staticfile::Static;
 use std::path::Path;
-
-const AUTH_STR: &str = "x-auth=dsajhdkjasriew232ad";
+use eng_dict::session::Session;
 
 fn main() {
 
@@ -123,12 +122,16 @@ fn main() {
                 let mut c_cokkie = cookie.clone();
                 match c_cokkie.pop() {
                     Some(str_cookie) => {
-                        //println!("cookie:{:?}", str_cookie);
-                        if str_cookie.contains(AUTH_STR) {
-                            return Some(())
-                        } else {
-                            return None
+                        //cookie:"x-auth=hoge"
+                        //cookieの区切りは[;] or [,]
+                        let sess = get_session();
+                        let cookies: Vec<&str> = str_cookie.split(|c: char| c == ';' || c == ',').collect();
+                        for val in cookies.into_iter() {
+                            if sess.exists_session(val.to_string().replace("xauth=", "")) {
+                                return Some(())
+                            }
                         }
+                        return None
                     },
                     _ => return None
                 };
@@ -170,16 +173,22 @@ fn main() {
         println!("{} {} {}", user, pass, count);
 
         if count > 0 {
-            let cookie = SetCookie(vec![String::from(AUTH_STR.to_string())]);
-            resp.headers.set(cookie);
+            let sess = get_session();
 
-            let word_list = format!("[{}]",  mongo.get_translated_list());
-            data.insert(String::from("translate_path"), url_answer);
-            data.insert(String::from("detail_path"), url_detail);
-            data.insert(String::from("list"), word_list);
-            resp.set_mut(Template::new("index", data)).set_mut(status::Ok);
+            if let Some(id) = sess.create_session() {
+                let cookie = SetCookie(vec![String::from(format!("xauth={}", id))]);
+                resp.headers.set(cookie);
 
-            Ok(resp)
+                let word_list = format!("[{}]",  mongo.get_translated_list());
+                data.insert(String::from("translate_path"), url_answer);
+                data.insert(String::from("detail_path"), url_detail);
+                data.insert(String::from("list"), word_list);
+                resp.set_mut(Template::new("index", data)).set_mut(status::Ok);
+
+                Ok(resp)
+            } else {
+                panic!("fatal session id cannot generate.");
+            }
 
         } else {
 
@@ -188,6 +197,18 @@ fn main() {
             Ok(resp)
 
         }
+    }
+
+    fn get_session() -> Session {
+        //セッション管理オブジェクト
+        let sess = match Session::new() {
+            Some(sess) => sess,
+            None => {
+                panic!("fatal session cannot create.");
+            },
+        };
+
+        sess
     }
 
     fn get_translate_all(word: String) -> Result<String, String> {
@@ -285,9 +306,9 @@ fn main() {
         panic!("{}", r.description());
     }
     chain.link_after(hbse);
-    
+
     println!("Listen on localhost:3000");
     let iron_instance = Iron::new(chain);
     println!("worker threads:{}", iron_instance.threads);
-    iron_instance.http("0.0.0.0:3000").unwrap();
+    iron_instance.http("localhost:3000").unwrap();
 }

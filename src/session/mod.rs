@@ -81,7 +81,7 @@ impl Session {
     }
 
     fn set_redis_expire(&self, session_id: String) -> redis::RedisResult<()> {
-        let _: () = try!(self.conn.expire(session_id, 180));
+        let _: () = try!(self.conn.expire(session_id, 1800));
         Ok(())
     }
 

@@ -135,15 +135,17 @@ impl Mongo {
                     if result_str != "" {
                         result_str = result_str + ",";
                     }
+
+                    let cnv_str = s.replace("'","\\'");
                     result_str = result_str + &"{'phrase':'".to_string();
-                    result_str = result_str + &s;
+                    result_str = result_str + &cnv_str;
                     result_str = result_str + &"','words':[".to_string();
                     result_str = result_str + &convert_jsonlist_to_string(&data, LIST_LIMIT_DISP_WORDS);
                     result_str = result_str + &"]}".to_string();
                 }
             }
         }
-
+        
         result_str
     }
 
@@ -221,7 +223,9 @@ pub fn convert_jsonlist_to_string(data: &TranslateResult, limit: i32) -> String 
                 if result != "" {
                     result = result + ",";
                 }
-                result = result + "'" + &p.text + "'";
+
+                let cnv_str = p.text.to_string().replace("'", "\\'");
+                result = result + "'" + &cnv_str + "'";
             },
             &None => {}
         }

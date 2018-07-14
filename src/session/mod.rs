@@ -13,7 +13,7 @@ pub struct Session {
 
 impl Session {
     pub fn new() -> Option<Session> {
-        let cli = match redis::Client::open("redis://127.0.0.1/") {
+        let cli = match redis::Client::open("redis://192.168.56.2/") {
             Ok(cl) => cl,
             Err(e) => { 
                 println!("redis open error {:?}", e);

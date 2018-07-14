@@ -7,7 +7,7 @@ use mongodb::cursor::Cursor;
 use mongodb::coll::options::FindOptions;
 use serde_json;
 
-const MONGODB: &str = "127.0.0.1";
+const MONGODB: &str = "192.168.56.2";
 const LIST_LIMIT_DISP_WORDS: i32 = 15;
 
 pub struct Mongo {

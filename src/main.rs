@@ -23,26 +23,29 @@ use eng_dict::page_handler::translate::Translate;
 use eng_dict::page_handler::top::Top;
 
 fn create_handlers() -> Vec<Box<PageHandler>> {
-    vec![
+    let handlers: Vec<Box<PageHandler>> = vec![
         Box::new(Top::new()),
         Box::new(Auth::new()),
         Box::new(Detail::new()),
         Box::new(Translate::new())
-    ]
+    ];
+
+    handlers
 }
 
 fn main() {
     //request controller
     fn controller(req: &mut Request) -> IronResult<Response> {
+        let handlers = create_handlers();
+        //if url not registered. show auth page 
+        let auth: Box<PageHandler> = Box::new(Auth::new());
         let target: _ = {
             let path_str = req.url.path()[0];
-            //if url not register show auth page 
-            let mut handler: Box<PageHandler> = Box::new(Auth::new());
-            for h in create_handlers() {
-                if h.path() == path_str {
-                    handler = h;
-                }
-            }
+            let handler = if let Some(handler) = handlers.as_slice().iter().filter(|h| h.path() == path_str).next() {
+                handler
+            } else {
+                &auth
+            };
             handler
         };
         target.handler(req)
@@ -66,7 +69,6 @@ fn main() {
         .mount("/css/", Static::new(Path::new("./src/css")));
 
     //Create Chain
-    //let mut chain = Chain::new(router);
     let mut chain = Chain::new(mount);
 
     // Add HandlerbarsEngine to middleware Chain
